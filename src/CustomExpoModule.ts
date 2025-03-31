@@ -1,12 +1,19 @@
-import { NativeModule, requireNativeModule } from 'expo';
+import { requireNativeModule, EventSubscription } from 'expo-modules-core';
 
-import { CustomExpoModuleEvents } from './CustomExpoModule.types';
-
-declare class CustomExpoModule extends NativeModule<CustomExpoModuleEvents> {
-  PI: number;
-  hello(): string;
-  setValueAsync(value: string): Promise<void>;
+export interface Subscription {
+  remove: () => void;
 }
 
-// This call loads the native module object from the JSI.
-export default requireNativeModule<CustomExpoModule>('CustomExpoModule');
+// Define the interface for your native module
+interface CustomExpoModuleInterface {
+  getTheme(): string;
+  setTheme(theme: string): void;
+
+  addListener(eventName: string, listener: (event: any) => void): EventSubscription;
+  removeAllListeners(eventName: string): void;
+}
+
+// This loads the native module object from the JSI
+const CustomExpoModule = requireNativeModule<CustomExpoModuleInterface>('CustomExpoModule');
+
+export default CustomExpoModule;
